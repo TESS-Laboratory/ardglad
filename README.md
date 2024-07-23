@@ -27,7 +27,7 @@ You can install the development version of ardglad like so:
 
 ``` r
 # install.packages("pak")
-pak::pkg_install("ardglad")
+pak::pkg_install("TESS-Laboratory/ardglad")
 ```
 
 ## Example
