@@ -26,8 +26,8 @@ series of globally consistent, tiled Landsat normalized surface reflectance
 from 1997 to the present operationally updated every 16 days.
 
 This package interacts with the [GLAD ARD API](https://www.glad.umd.edu/ard/home#download)
-to download and process the data. The package is currently in development and
-only provides functionality for returning the tile URLs.
+to download and process the data. **The package is currently in development and
+only provides functionality for returning the tile URLs**.
 
 ## Installation
 
@@ -42,7 +42,7 @@ pak::pkg_install("TESS-Laboratory/ardglad")
 ## Example
 
 Here is an example of how to generate the urls for the GLAD ARD tiles for an 
-example location in Rondonia, Brazil.
+example location in Rondônia, Brazil.
 
 ```{r example}
 library(ardglad)
