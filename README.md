@@ -41,45 +41,52 @@ library(ardglad)
 rondonia_eg <- sf::st_point(c(-61.604, -12.864)) |>
   sf::st_sfc(crs = 4326) |>
   sf::st_sf() |>
-  sf::st_buffer(50000)
+  sf::st_buffer(20000)
 
-ard_glad_urls(rondonia_eg, "2023-01-01", "2023-03-30")
+rondonia_urls <- ard_glad_urls(rondonia_eg, "2023-07-01", "2023-07-30")
+
+print(rondonia_urls)
 #> 
 #> ── < ARD GLAD urls >
 #> 
-#> ── [[1]] 2023-01-01:2023-01-16 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/990.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/990.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/990.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/990.tif
+#> ── [[1]] 2023-06-26:2023-07-11 ─────────────────────────────────────────────────
+#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/1001.tif
+#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/1001.tif
 #> 
-#> ── [[2]] 2023-01-17:2023-02-01 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/991.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/991.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/991.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/991.tif
+#> ── [[2]] 2023-07-12:2023-07-27 ─────────────────────────────────────────────────
+#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/1002.tif
+#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/1002.tif
 #> 
-#> ── [[3]] 2023-02-02:2023-02-17 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/992.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/992.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/992.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/992.tif
-#> 
-#> ── [[4]] 2023-02-18:2023-03-05 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/993.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/993.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/993.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/993.tif
-#> 
-#> ── [[5]] 2023-03-06:2023-03-21 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/994.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/994.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/994.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/994.tif
-#> 
-#> ── [[6]] 2023-03-22:2023-04-06 ─────────────────────────────────────────────────
-#> https://glad.umd.edu/dataset/glad_ard2/13S/062W_13S/995.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/062W_12S/995.tif
-#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/995.tif
-#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/995.tif
+#> ── [[3]] 2023-07-28:2023-08-12 ─────────────────────────────────────────────────
+#> https://glad.umd.edu/dataset/glad_ard2/12S/061W_12S/1003.tif
+#> https://glad.umd.edu/dataset/glad_ard2/13S/061W_13S/1003.tif
 ```
+
+And now let’s download the data and plot it.
+
+``` r
+rg <- ard_glad_download(rondonia_urls, "rondonia_glad")
+#> ℹ Downloading files for time period: 2023-06-26:2023-07-11
+#> ℹ Downloading files for time period: 2023-07-12:2023-07-27
+#> ℹ Downloading files for time period: 2023-07-28:2023-08-12
+
+# plot the result
+par(mfrow = c(1, 3))
+p <- mapply(
+  \(x, y) {
+    terra::plotRGB(x,
+      r = 3, g = 2, b = 1,
+      zlim = c(0, 7000),
+      zcol = TRUE,
+      stretch = "lin",
+      axes = TRUE,
+      mar = c(2, 2, 2, 1),
+      main = y
+    )
+  },
+  rg,
+  names(rg)
+)
+```
+
+<img src="man/figures/README-download-data-1.png" width="100%" />

@@ -44,14 +44,39 @@ pak::pkg_install("TESS-Laboratory/ardglad")
 Here is an example of how to generate the urls for the GLAD ARD tiles for an 
 example location in Rondônia, Brazil.
 
-```{r example}
+```{r get-urls}
 library(ardglad)
 
 rondonia_eg <- sf::st_point(c(-61.604, -12.864)) |>
   sf::st_sfc(crs = 4326) |>
   sf::st_sf() |>
-  sf::st_buffer(50000)
+  sf::st_buffer(20000)
 
-ard_glad_urls(rondonia_eg, "2023-01-01", "2023-03-30")
+rondonia_urls <- ard_glad_urls(rondonia_eg, "2023-07-01", "2023-07-30")
+
+print(rondonia_urls)
+```
+
+And now let's download the data and plot it.
+```{r download-data}
+rg <- ard_glad_download(rondonia_urls, "rondonia_glad")
+
+# plot the result
+par(mfrow = c(1, 3))
+p <- mapply(
+  \(x, y) {
+    terra::plotRGB(x,
+      r = 3, g = 2, b = 1,
+      zlim = c(0, 7000),
+      zcol = TRUE,
+      stretch = "lin",
+      axes = TRUE,
+      mar = c(2, 2, 2, 1),
+      main = y
+    )
+  },
+  rg,
+  names(rg)
+)
 ```
 
