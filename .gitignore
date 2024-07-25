@@ -6,3 +6,6 @@
 .quarto
 
 /DEV/*
+
+*.tif*
+rondonia_glad/*
