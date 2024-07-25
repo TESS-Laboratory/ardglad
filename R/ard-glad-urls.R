@@ -18,17 +18,26 @@
 #' @export
 ard_glad_urls <- function(
     aoi, start_date, end_date = NULL,
-    rerpoj = TRUE, src = c("umd", "aws")) {
+    reproj = TRUE, src = c("umd", "aws")) {
+  # arg checks
   src <- rlang::arg_match(src)
+  assertthat::assert_that(length(end_date) <= 1)
+  assertthat::assert_that(is.logical(reproj))
+
+  if (length(start_date) > 1) {
+    return(ard_glad_urls_multi(aoi, start_date, reproj, src))
+  }
+
+  # get the intersecting tile and lat names
+  tiles <- tile_name_and_lat(aoi, reproj)
+  lats <- sub(".*_", "", tiles)
+  # get the time interval ids
+  time_ints <- time_int_range(start_date, end_date)
 
   src_base <- switch(src,
     umd = "https://glad.umd.edu/dataset/glad_ard2/",
     aws = "/vsis3/glad.landsat.ard/data/tiles/"
   )
-
-  tiles <- tile_name_and_lat(aoi, reproj)
-  lats <- sub(".*_", "", tiles)
-  time_ints <- time_int_range(start_date, end_date)
 
   urls <- lapply(time_ints, function(x) {
     paste0(
@@ -40,6 +49,16 @@ ard_glad_urls <- function(
   class(urls) <- c(glue::glue("ard_glad_urls_{src}"), class(urls))
 
   return(urls)
+}
+
+
+ard_glad_urls_multi <- function(aoi, start_date, reproj, src) {
+  urls_multi <- lapply(start_date, function(x) {
+    ard_glad_urls(aoi, x, reproj = reproj, src = src)
+  })
+  urls_multi <- unlist(lapply(urls_multi, as.list), recursive = FALSE)
+  class(urls_multi) <- c(glue::glue("ard_glad_urls_{src}"), class(urls_multi))
+  return(urls_multi)
 }
 
 #' print method for ard_glad_urls objects
