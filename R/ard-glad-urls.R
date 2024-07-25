@@ -21,6 +21,8 @@ ard_glad_urls <- function(
     reproj = TRUE, src = c("umd", "aws")) {
   # arg checks
   src <- rlang::arg_match(src)
+
+  # TODO: let's write our own assertions remove the dep and make better messages
   assertthat::assert_that(length(end_date) <= 1)
   assertthat::assert_that(is.logical(reproj))
 

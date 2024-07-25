@@ -2,15 +2,18 @@
 #' @param glad_urls a list of URLs to download from `ard_glad_urls`
 #' @param dir a character string of the directory to save the files
 #' @param prefix a character string to prefix the subdirectory/filenames
-#' @param return_filenmae a logical value indicating whether to return the
+#' @param return_filename a logical value indicating whether to return the
 #' filename or the SpatRaster object
-#' @return a list of SpatRaster objects or filenames if `return_filenmae` is
+#' @return a list of SpatRaster objects or filenames if `return_filename` is
 #' TRUE
 #' @export
 #' @rdname ard-glad-download
 #' @family GLAD ARD download
 #'
-ard_glad_download <- function(glad_urls, dir, prefix = dir, return_filenmae = FALSE) {
+ard_glad_download <- function(
+    glad_urls, dir,
+    prefix = dir,
+    return_filename = FALSE) {
   UseMethod("ard_glad_download")
 }
 
@@ -39,15 +42,16 @@ ard_glad_download.ard_glad_urls_aws <- function(glad_urls, ...) {
 #' method for UMD sources
 #' @export
 ard_glad_download.ard_glad_urls_umd <- function(
-    glad_urls, dir, prefix = dir, return_filenmae = FALSE) {
+    glad_urls, dir, prefix = dir, return_filename = FALSE) {
   glad <- mapply(
     \(x, y){
-      ard_glad_download_ts(x, y, dir, prefix, return_filenmae)
+      ard_glad_download_ts(x, y, dir, prefix, return_filename)
     },
     as.list(glad_urls),
     as.list(names(glad_urls))
   )
 
+  # TODO: NEED TO BETTER HANDLE RETURN FILENAME - new class or attribute?
   class(glad) <- c("ard_glad", class(glad))
 
   return(glad)
@@ -63,7 +67,7 @@ as.list.ard_glad <- function(x, ...) {
 }
 
 
-ard_glad_download_ts <- function(x, name, dir, prefix, return_filenmae) {
+ard_glad_download_ts <- function(x, name, dir, prefix, return_filename) {
   name_split <- strsplit(x, "/")
 
   mk_name <- paste(
@@ -100,7 +104,7 @@ ard_glad_download_ts <- function(x, name, dir, prefix, return_filenmae) {
 
   glad_ard_vrt <- build_vrt(out_files, vrt_name)
 
-  if (return_filenmae) {
+  if (return_filename) {
     return(vrt_name)
   }
 

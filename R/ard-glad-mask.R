@@ -17,13 +17,15 @@
 #'
 #' see Potapov, et. al (2020) for more details (https://doi.org/10.3390/rs12030426)
 #' @export
-ard_glad_mask <- function(glad) {
+ard_glad_mask <- function(
+    glad, mask_band = "QA",
+    keep_bits = c(1, 2, 15)) {
   UseMethod("ard_glad_mask")
 }
 
 #' method for default sources - not supported
 #' @export
-ard_glad_mask.default <- function(glad) {
+ard_glad_mask.default <- function(glad, ...) {
   cli::cli_abort(
     c(
       "x" = "A class of {class(glad)} is not supported for the `ard_glad_mask` function",
