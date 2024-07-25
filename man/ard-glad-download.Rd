@@ -2,9 +2,15 @@
 % Please edit documentation in R/ard-glad-download.R
 \name{ard_glad_download}
 \alias{ard_glad_download}
+\alias{print.ard_glad}
+\alias{plot.ard_glad}
 \title{Download GLAD ARD data}
 \usage{
 ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
+
+\method{print}{ard_glad}(x, ...)
+
+\method{plot}{ard_glad}(x)
 }
 \arguments{
 \item{glad_urls}{a list of URLs to download from \code{ard_glad_urls}}
@@ -15,6 +21,10 @@ ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
 
 \item{return_filenmae}{a logical value indicating whether to return the
 filename or the SpatRaster object}
+
+\item{x}{an ard_glad object}
+
+\item{...}{not used}
 }
 \value{
 a list of SpatRaster objects or filenames if \code{return_filenmae} is
@@ -22,4 +32,9 @@ TRUE
 }
 \description{
 Download GLAD ARD data
+
+print method for ard_glad objects
+
+plot method for ard_glad objects
 }
+\concept{GLAD ARD download}
