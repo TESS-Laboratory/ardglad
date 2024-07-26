@@ -34,7 +34,7 @@ ard_glad_mask.default <- function(glad, ...) {
   )
 }
 
-#' method for ard_glad objects
+#' mask method for ard_glad objects
 #' @export
 ard_glad_mask.ard_glad <- function(
     glad, mask_band = "QA",
@@ -49,9 +49,21 @@ ard_glad_mask.ard_glad <- function(
     return(masked_raster)
   }
 
-  glad <- lapply(glad, apply_mask)
+  # TODO: here we have an issue -  we can't pass SpatRasters across cores -
+  # perhaps we should reconsider how we construct the classes -  maybe no SpatRaster
+  # and instead thy are always sources which we coerce into SpatRasters when needed
+  glad <- future.apply::future_lapply(glad, apply_mask)
 
   class(glad) <- c("ard_glad", class(glad))
 
   return(glad)
+}
+
+#' mask method for ard_glad_src objects
+#' @export
+ard_glad_mask.ard_glad_src <- function(
+    glad, mask_band = "QA",
+    keep_bits = c(1, 2, 15)) {
+  glad <- convert_src_to_glad(glad)
+  ard_glad_mask.ard_glad(glad, mask_band, keep_bits)
 }
