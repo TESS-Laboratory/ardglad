@@ -43,16 +43,16 @@ ard_glad_download.ard_glad_urls_aws <- function(glad_urls, ...) {
 #' @export
 ard_glad_download.ard_glad_urls_umd <- function(
     glad_urls, dir, prefix = dir, return_filename = FALSE) {
-  glad <- mapply(
-    \(x, y){
+  glad <- future.apply::future_mapply(
+    \(x, y) {
       ard_glad_download_ts(x, y, dir, prefix, return_filename)
     },
     as.list(glad_urls),
     as.list(names(glad_urls))
   )
 
-  # TODO: NEED TO BETTER HANDLE RETURN FILENAME - new class or attribute?
-  class(glad) <- c("ard_glad", class(glad))
+  newclass <- ifelse(return_filename, "ard_glad_src", "ard_glad")
+  class(glad) <- c(newclass, class(glad))
 
   return(glad)
 }
@@ -97,7 +97,8 @@ ard_glad_download_ts <- function(x, name, dir, prefix, return_filename) {
   down_df <- curl::multi_download(x,
     destfiles = out_files,
     userpwd = "glad:ardpas",
-    resume = TRUE
+    resume = TRUE,
+    multiplex = TRUE
   )
 
   check_status_codes(down_df)
@@ -147,7 +148,9 @@ check_status_codes <- function(x) {
 #' @param ... not used
 #' @export
 print.ard_glad <- function(x, ...) {
-  cli::cli_h3(cli::col_br_magenta("< ARD GLAD rasters>"))
+  cli::cli_h3(
+    cli::col_br_magenta("< ARD GLAD {cli::no(length(x))} SpatRaster{?s}. >")
+  )
   pretty_p <- function(i) {
     cli::cli_h1(paste0("[[{which(names(x) == i)}]] ", i))
     y <- x[[i]]
@@ -157,10 +160,65 @@ print.ard_glad <- function(x, ...) {
   invisible()
 }
 
+#' print method for ard_glad objects
+#' @rdname ard-glad-download
+#' @family GLAD ARD download
+#' @param x an ard_glad_src object
+#' @param ... not used
+#' @export
+print.ard_glad_src <- function(x, ...) {
+  cli::cli_h3(
+    cli::col_br_magenta("< {length(x)} ARD GLAD raster source{?s} >")
+  )
+  pretty_p <- function(i) {
+    cli::cli_h1(paste0("[[{which(names(x) == i)}]] ", i))
+    y <- terra::rast(x[[i]])
+    cli::cli_inform(paste(cli::col_br_blue("source      :"), x[[i]]))
+    cli::cli_inform(paste(
+      cli::col_br_blue("dimensions  :"),
+      paste(dim(y), collapse = ", "), "(nrow, ncol, nlyr)"
+    ))
+    cli::cli_inform(paste(
+      cli::col_br_blue("resolution  :"),
+      paste(round(terra::res(y), 7), collapse = ", "), "(x, y)"
+    ))
+    cli::cli_inform(paste(
+      cli::col_br_blue("extent      :"),
+      paste(round(terra::ext(y), 7), collapse = ", "),
+      "(xmin, xmax, ymin, ymax)"
+    ))
+    crsinfo <- terra::crs(y, describe = TRUE)
+    cli::cli_inform(paste(
+      cli::col_br_blue("coord. ref. :"),
+      ifelse(
+        terra::is.lonlat(y),
+        "lon/lat",
+        NULL
+      ),
+      ifelse(
+        is.na(crsinfo$name),
+        NULL,
+        crsinfo$name
+      ),
+      ifelse(
+        all(!is.na(c(crsinfo$authority, crsinfo$code))),
+        glue::glue("({crsinfo$authority}:{crsinfo$code})"),
+        NULL
+      )
+    ))
+    cli::cli_inform(paste(
+      cli::col_br_blue("band names   :"),
+      paste(names(y), collapse = ", ")
+    ))
+  }
+  lapply(names(x), pretty_p)
+  invisible()
+}
+
 #' plot method for ard_glad objects
 #' @rdname ard-glad-download
 #' @family GLAD ARD download
-#' @param x an ard_glad object
+#' @param x a ard_glad object
 #' @param ... not used
 #' @export
 plot.ard_glad <- function(x) {
@@ -180,4 +238,25 @@ plot.ard_glad <- function(x) {
     names(x)
   )
   invisible()
+}
+
+#' plot method for ard_glad objects
+#' @rdname ard-glad-download
+#' @family GLAD ARD download
+#' @param x a ard_glad_src object
+#' @param ... not used
+#' @export
+plot.ard_glad_src <- function(x) {
+  plot(convert_src_to_glad(x))
+}
+
+#' helper to covert the ard_glad_src to ard_glad
+#' @param x an ard_glad_src object
+#' @return an ard_glad object
+#' @noRd
+#' @keywords internal
+convert_src_to_glad <- function(x) {
+  x <- lapply(x, terra::rast)
+  class(x) <- c("ard_glad", class(x))
+  return(x)
 }
