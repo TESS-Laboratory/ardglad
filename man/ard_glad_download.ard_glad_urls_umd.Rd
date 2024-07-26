@@ -4,7 +4,7 @@
 \alias{ard_glad_download.ard_glad_urls_umd}
 \title{method for UMD sources}
 \usage{
-\method{ard_glad_download}{ard_glad_urls_umd}(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
+\method{ard_glad_download}{ard_glad_urls_umd}(glad_urls, dir, prefix = dir, return_filename = FALSE)
 }
 \description{
 method for UMD sources

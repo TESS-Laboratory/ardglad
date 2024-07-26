@@ -2,10 +2,10 @@
 % Please edit documentation in R/ard-glad-mask.R
 \name{ard_glad_mask.ard_glad}
 \alias{ard_glad_mask.ard_glad}
-\title{method for ard_glad objects}
+\title{mask method for ard_glad objects}
 \usage{
 \method{ard_glad_mask}{ard_glad}(glad, mask_band = "QA", keep_bits = c(1, 2, 15))
 }
 \description{
-method for ard_glad objects
+mask method for ard_glad objects
 }

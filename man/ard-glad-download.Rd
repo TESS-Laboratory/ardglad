@@ -3,14 +3,20 @@
 \name{ard_glad_download}
 \alias{ard_glad_download}
 \alias{print.ard_glad}
+\alias{print.ard_glad_src}
 \alias{plot.ard_glad}
+\alias{plot.ard_glad_src}
 \title{Download GLAD ARD data}
 \usage{
-ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
+ard_glad_download(glad_urls, dir, prefix = dir, return_filename = FALSE)
 
 \method{print}{ard_glad}(x, ...)
 
+\method{print}{ard_glad_src}(x, ...)
+
 \method{plot}{ard_glad}(x)
+
+\method{plot}{ard_glad_src}(x)
 }
 \arguments{
 \item{glad_urls}{a list of URLs to download from \code{ard_glad_urls}}
@@ -19,21 +25,25 @@ ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
 
 \item{prefix}{a character string to prefix the subdirectory/filenames}
 
-\item{return_filenmae}{a logical value indicating whether to return the
+\item{return_filename}{a logical value indicating whether to return the
 filename or the SpatRaster object}
 
-\item{x}{an ard_glad object}
+\item{x}{a ard_glad_src object}
 
 \item{...}{not used}
 }
 \value{
-a list of SpatRaster objects or filenames if \code{return_filenmae} is
+a list of SpatRaster objects or filenames if \code{return_filename} is
 TRUE
 }
 \description{
 Download GLAD ARD data
 
 print method for ard_glad objects
+
+print method for ard_glad objects
+
+plot method for ard_glad objects
 
 plot method for ard_glad objects
 }

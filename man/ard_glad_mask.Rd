@@ -4,7 +4,7 @@
 \alias{ard_glad_mask}
 \title{Mask GLAD ARD data for shadows and clouds}
 \usage{
-ard_glad_mask(glad)
+ard_glad_mask(glad, mask_band = "QA", keep_bits = c(1, 2, 15))
 }
 \arguments{
 \item{glad}{a list of SpatRaster objects}

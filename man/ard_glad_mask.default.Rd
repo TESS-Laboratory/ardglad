@@ -4,7 +4,7 @@
 \alias{ard_glad_mask.default}
 \title{method for default sources - not supported}
 \usage{
-\method{ard_glad_mask}{default}(glad)
+\method{ard_glad_mask}{default}(glad, ...)
 }
 \description{
 method for default sources - not supported
