@@ -16,7 +16,7 @@ series of globally consistent, tiled Landsat normalized surface
 reflectance from 1997 to the present operationally updated every 16
 days.
 
-This package interacts with the [GLAD ARD
+This R package interacts with the [GLAD ARD
 API](https://www.glad.umd.edu/ard/home#download) to download and process
 the data.
 
@@ -66,44 +66,53 @@ print(ron_urls)
 
 And now let’s download the data and plot it. Note that although an
 object of class `ard_glad` is returned, in reality this is just a list
-of SpatRasters and can be coerced back to a list with `as.list`.
+of lists that contain information about each raster; to convert this to
+a more general use object for R, use `as.list` which will coerce the
+object to a list of `SpatRasters`.
+
+Note we can use `future` to parallelise some of the operations such as
+downloads and masking - by setting the plan here parallisation will be
+carried out automatically.
 
 ``` r
+future::plan("multisession", workers = 3)
+
 ron_ras <- ard_glad_download(ron_urls, "rondonia_glad")
-#> ℹ Downloading files for time period: 2023-06-26:2023-07-11
-#> ℹ Downloading files for time period: 2023-07-12:2023-07-27
-#> ℹ Downloading files for time period: 2023-07-28:2023-08-12
 
 print(ron_ras)
 #> 
-#> ── < ARD GLAD rasters>
+#> ── < 3 ARD GLAD mosaics >
 #> 
 #> ── [[1]] 2023-06-26:2023-07-11 ─────────────────────────────────────────────────
-#> class       : SpatRaster 
-#> dimensions  : 8004, 4004, 8  (nrow, ncol, nlyr)
-#> resolution  : 0.00025, 0.00025  (x, y)
-#> extent      : -63.0005, -61.9995, -10.0005, -7.9995  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-#> source      : rondonia_glad_2023_06_26_2023_07_11.vrt 
-#> names       : B, G, R, N, S1, S2, ...
+#> source :
+#> /home/hugh/TESS-Projects/ardglad/rondonia_glad/rondonia_glad_2023_06_26_2023_07_11/rondonia_glad_2023_06_26_2023_07_11.vrt
+#> dimensions : 8004, 4004, 8 (nrow, ncol, nlyr)
+#> resolution : 0.00025, 0.00025 (x, y)
+#> extent : ext(-63.0005, -61.9995, -10.0005, -7.9995) (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
+#> band names : B, G, R, N, S1, S2, T, QA
+#> 
 #> 
 #> ── [[2]] 2023-07-12:2023-07-27 ─────────────────────────────────────────────────
-#> class       : SpatRaster 
-#> dimensions  : 8004, 4004, 8  (nrow, ncol, nlyr)
-#> resolution  : 0.00025, 0.00025  (x, y)
-#> extent      : -63.0005, -61.9995, -10.0005, -7.9995  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-#> source      : rondonia_glad_2023_07_12_2023_07_27.vrt 
-#> names       : B, G, R, N, S1, S2, ...
+#> 
+#> source :
+#> /home/hugh/TESS-Projects/ardglad/rondonia_glad/rondonia_glad_2023_07_12_2023_07_27/rondonia_glad_2023_07_12_2023_07_27.vrt
+#> dimensions : 8004, 4004, 8 (nrow, ncol, nlyr)
+#> resolution : 0.00025, 0.00025 (x, y)
+#> extent : ext(-63.0005, -61.9995, -10.0005, -7.9995) (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
+#> band names : B, G, R, N, S1, S2, T, QA
+#> 
 #> 
 #> ── [[3]] 2023-07-28:2023-08-12 ─────────────────────────────────────────────────
-#> class       : SpatRaster 
-#> dimensions  : 8004, 4004, 8  (nrow, ncol, nlyr)
-#> resolution  : 0.00025, 0.00025  (x, y)
-#> extent      : -63.0005, -61.9995, -10.0005, -7.9995  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-#> source      : rondonia_glad_2023_07_28_2023_08_12.vrt 
-#> names       : B, G, R, N, S1, S2, ...
+#> 
+#> source :
+#> /home/hugh/TESS-Projects/ardglad/rondonia_glad/rondonia_glad_2023_07_28_2023_08_12/rondonia_glad_2023_07_28_2023_08_12.vrt
+#> dimensions : 8004, 4004, 8 (nrow, ncol, nlyr)
+#> resolution : 0.00025, 0.00025 (x, y)
+#> extent : ext(-63.0005, -61.9995, -10.0005, -7.9995) (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
+#> band names : B, G, R, N, S1, S2, T, QA
 
 par(mfrow = c(1, 3))
 plot(ron_ras)
@@ -116,7 +125,8 @@ We can also query specific moments through time, by specifying multiple
 
 ``` r
 ron_urls_97_23 <- ard_glad_urls(
-  rondonia_eg, c("1997-06-30", "2010-06-01", "2023-06-30")
+  rondonia_eg,
+  c("1997-06-30", "2010-06-01", "2023-06-30")
 )
 ```
 
@@ -126,12 +136,18 @@ for further analysis:
 ``` r
 ron_ras_97_23_masked <- ard_glad_download(ron_urls_97_23, "rondonia_glad") |>
   ard_glad_mask()
-#> ℹ Downloading files for time period: 1997-06-26:1997-07-11
-#> ℹ Downloading files for time period: 2010-05-25:2010-06-09
-#> ℹ Downloading files for time period: 2023-06-26:2023-07-11
 
 par(mfrow = c(1, 3))
 plot(ron_ras_97_23_masked)
 ```
 
 <img src="man/figures/README-cloud-mask-1.png" width="100%" />
+
+As a bonus, here is a false colour composite:
+
+``` r
+par(mfrow = c(1, 3))
+plot(ron_ras_97_23_masked, r = 4, g = 3, b = 2)
+```
+
+<img src="man/figures/README-fcc-1.png" width="100%" />
