@@ -2,15 +2,18 @@
 % Please edit documentation in R/ard-glad-download.R
 \name{ard_glad_download}
 \alias{ard_glad_download}
-\alias{print.ard_glad}
-\alias{plot.ard_glad}
+\alias{ard_glad_download.default}
+\alias{ard_glad_download.ard_glad_urls_aws}
+\alias{ard_glad_download.ard_glad_urls_umd}
 \title{Download GLAD ARD data}
 \usage{
-ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
+ard_glad_download(glad_urls, dir, prefix = dir, quiet = TRUE, ...)
 
-\method{print}{ard_glad}(x, ...)
+\method{ard_glad_download}{default}(glad_urls, ...)
 
-\method{plot}{ard_glad}(x)
+\method{ard_glad_download}{ard_glad_urls_aws}(glad_urls, ...)
+
+\method{ard_glad_download}{ard_glad_urls_umd}(glad_urls, dir, prefix = dir, quiet = TRUE, ...)
 }
 \arguments{
 \item{glad_urls}{a list of URLs to download from \code{ard_glad_urls}}
@@ -19,22 +22,21 @@ ard_glad_download(glad_urls, dir, prefix = dir, return_filenmae = FALSE)
 
 \item{prefix}{a character string to prefix the subdirectory/filenames}
 
-\item{return_filenmae}{a logical value indicating whether to return the
-filename or the SpatRaster object}
+\item{quiet}{a logical to suppress messages}
 
-\item{x}{an ard_glad object}
-
-\item{...}{not used}
+\item{...}{additional arguments not used}
 }
 \value{
-a list of SpatRaster objects or filenames if \code{return_filenmae} is
+a list of SpatRaster objects or filenames if \code{return_filename} is
 TRUE
 }
 \description{
 Download GLAD ARD data
 
-print method for ard_glad objects
+method for default sources - not supported
 
-plot method for ard_glad objects
+method for AWS sources - not supported
+
+method for UMD sources
 }
 \concept{GLAD ARD download}

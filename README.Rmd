@@ -25,13 +25,12 @@ The goal of ardglad is to provide access to the Global Land Analysis & Discovery
 series of globally consistent, tiled Landsat normalized surface reflectance 
 from 1997 to the present operationally updated every 16 days.
 
-This package interacts with the [GLAD ARD API](https://www.glad.umd.edu/ard/home#download)
+This R package interacts with the [GLAD ARD API](https://www.glad.umd.edu/ard/home#download)
 to download and process the data. 
 
 ## Installation
 
 You can install the development version of ardglad like so:
-
 
 ``` r
 # install.packages("pak")
@@ -41,7 +40,7 @@ pak::pkg_install("TESS-Laboratory/ardglad")
 ## Example
 
 Here is an example of how to generate the urls for the GLAD ARD tiles for an 
-example location in Rondônia, Brazil.
+example location in Rondônia, Brazil. 
 
 ```{r get-urls}
 library(ardglad)
@@ -60,9 +59,18 @@ print(ron_urls)
 ```
 
 And now let's download the data and plot it. Note that although an object of 
-class `ard_glad` is returned, in reality this is just a list of SpatRasters and
-can be coerced back to a list with `as.list`.
+class `ard_glad` is returned, in reality this is just a list of lists that 
+contain information about each raster; to convert this to a more general use 
+object for R, use `as.list` which will coerce the object to a list of 
+`SpatRasters`. 
+
+Note we can use `future` to parallelise some of the operations such as downloads 
+and masking - by setting the plan here parallisation will be carried out 
+automatically.
+
 ```{r download-data}
+future::plan("multisession", workers = 3)
+
 ron_ras <- ard_glad_download(ron_urls, "rondonia_glad")
 
 print(ron_ras)
@@ -76,7 +84,8 @@ We can also query specific moments through time, by specifying multiple
 
 ```{r multi-date}
 ron_urls_97_23 <- ard_glad_urls(
-  rondonia_eg, c("1997-06-30", "2010-06-01", "2023-06-30")
+  rondonia_eg,
+  c("1997-06-30", "2010-06-01", "2023-06-30")
 )
 ```
 Now we can download these data and mask clouds, shadows and haze, ready for 
@@ -88,4 +97,11 @@ ron_ras_97_23_masked <- ard_glad_download(ron_urls_97_23, "rondonia_glad") |>
 
 par(mfrow = c(1, 3))
 plot(ron_ras_97_23_masked)
+```
+
+As a bonus, here is a false colour composite:
+
+```{r fcc}
+par(mfrow = c(1, 3))
+plot(ron_ras_97_23_masked, r = 4, g = 3, b = 2)
 ```

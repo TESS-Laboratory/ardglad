@@ -5,9 +5,10 @@
 #' This tile dataset is from
 #' https://glad.umd.edu/users/Potapov/ARD/Global_ARD_tiles.zip
 gladtiles <- function() {
-  sf::read_sf(
-    system.file("global_ard_tiles/Global_ARD_tiles.fgb", package = "ardglad")
-  )
+  sf::read_sf(paste0(
+    "/vsizip/",
+    system.file("global_ard_tiles/Global_ARD_tiles.zip", package = "ardglad")
+  ))
 }
 
 #' Get glad tile names that intersect an aoi.

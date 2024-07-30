@@ -5,14 +5,18 @@ if (!dir.exists("inst/global_ard_tiles")) {
 }
 
 glad_tiles_path <- "inst/global_ard_tiles/Global_ARD_tiles.fgb"
-
+glad_tiles_zip <- "inst/global_ard_tiles/Global_ARD_tiles.zip"
 # get the glad tiles
 glad_tiles <- sf::read_sf(
   "/vsizip/vsicurl/https://glad.umd.edu/users/Potapov/ARD/Global_ARD_tiles.zip"
 )
 
 sf::write_sf(glad_tiles, glad_tiles_path, delete_dsn = TRUE)
-glad_tiles <- sf::read_sf(glad_tiles_path)
+
+utils::zip(glad_tiles_zip, glad_tiles_path)
+file.remove(glad_tiles_path)
+
+glad_tiles <- sf::read_sf(paste0("/vsizip/", glad_tiles_zip))
 
 glad_tiles
 
