@@ -3,7 +3,7 @@
 #' @param start_date a character string representing the start date.
 #' @param end_date a character string representing the end date. if NULL, only
 #' the start date is used and tiles for a single 16-day interval are returned.
-#' @param rerpoj a logical value indicating whether to reproject the input if
+#' @param reproj a logical value indicating whether to reproject the input if
 #' it is not in the WGS84 CRS.
 #' @param src a character string indicating the source of the data. Options are
 #' "umd" (University of Maryland) and "aws" (Amazon Web Services).
@@ -22,7 +22,6 @@ ard_glad_urls <- function(
   # arg checks
   src <- rlang::arg_match(src)
 
-  # TODO: let's write our own assertions remove the dep and make better messages
   assertthat::assert_that(length(end_date) <= 1)
   assertthat::assert_that(is.logical(reproj))
 
