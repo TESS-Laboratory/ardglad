@@ -2,16 +2,38 @@
 % Please edit documentation in R/ard-glad-mask.R
 \name{ard_glad_mask}
 \alias{ard_glad_mask}
+\alias{ard_glad_mask.default}
+\alias{ard_glad_mask.ard_glad}
 \title{Mask GLAD ARD data for shadows and clouds}
 \usage{
-ard_glad_mask(glad, mask_band = "QA", keep_bits = c(1, 2, 15))
+ard_glad_mask(
+  glad,
+  filenames = new_source_names(glad, "mask"),
+  mask_band = "QA",
+  keep_bits = c(1, 2, 15),
+  ...
+)
+
+\method{ard_glad_mask}{default}(glad, ...)
+
+\method{ard_glad_mask}{ard_glad}(
+  glad,
+  filenames = new_source_names(glad, "mask"),
+  mask_band = "QA",
+  keep_bits = c(1, 2, 15),
+  ...
+)
 }
 \arguments{
 \item{glad}{a list of SpatRaster objects}
 
+\item{filenames}{a character vector of filenames}
+
 \item{mask_band}{a character string representing the band to use as the mask}
 
 \item{keep_bits}{a numeric vector of bits to keep see details}
+
+\item{...}{additional arguments passed to \code{terra::mask}}
 }
 \value{
 an object of class \code{ard_glad} simply a list of SpatRaster objects
@@ -19,6 +41,10 @@ with a convenient class for GLAD specific operations.
 }
 \description{
 Mask GLAD ARD data for shadows and clouds
+
+method for default sources - not supported
+
+mask method for ard_glad objects
 }
 \details{
 The \code{keep_bits} argument is used to create a binary mask from the
@@ -34,3 +60,4 @@ The \code{keep_bits} argument is used to create a binary mask from the
 
 see Potapov, et. al (2020) for more details (https://doi.org/10.3390/rs12030426)
 }
+\concept{GLAD ARD mask}

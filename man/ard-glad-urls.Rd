@@ -26,15 +26,15 @@ ard_glad_urls(
 \item{end_date}{a character string representing the end date. if NULL, only
 the start date is used and tiles for a single 16-day interval are returned.}
 
+\item{reproj}{a logical value indicating whether to reproject the input if
+it is not in the WGS84 CRS.}
+
 \item{src}{a character string indicating the source of the data. Options are
 "umd" (University of Maryland) and "aws" (Amazon Web Services).}
 
 \item{x}{an ard_glad_urls object}
 
 \item{...}{not used}
-
-\item{rerpoj}{a logical value indicating whether to reproject the input if
-it is not in the WGS84 CRS.}
 }
 \value{
 An ard_glad_urls object (an s3 class), essentially a simple named
