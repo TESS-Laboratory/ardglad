@@ -53,11 +53,10 @@ which_doy <- function(d) {
 #' @noRd
 #' @keywords internal
 time_int_range <- function(start_date, end_date = NULL) {
-  sd_ob <- deparse(substitute(start_date))
-  is_valid_date(start_date, sd_ob)
+  is_valid_date(start_date)
   if (!is.null(end_date)) {
     ed_ob <- deparse(substitute(end_date))
-    is_valid_date(end_date, ed_ob)
+    is_valid_date(end_date)
     assert_date_after(start_date, end_date)
   }
 
